@@ -5,16 +5,16 @@ const getAllUsers = () => users.filter(user => !user.isDeleted);
 
 const getDeletedUsers = () => users.filter(user => user.isDeleted);
 
-const getUser = userId => users.find(user => userId === user.id);
+const getUser = userId => users.find(user => userId == user.id);
 
-const addUser = (userData) => users.push({
+const addUser = userData => users.push({
 	...userData,
 	id: uuidv1(),
 	isDeleted: false
 });
 
 const updateUser = (id, userData) => {
-	const index = users.findIndex(user => user.id === id);
+	const index = users.findIndex(user => user.id == id);
 	
 	if (index === -1) {
 		return undefined;
@@ -32,21 +32,21 @@ const getAutoSuggestUsers = (loginSubstring, limit) => {
 	
 	if (!matchedUsers.length) {
 		return undefined;
+	} else {
+		return matchedUsers
+			.sort((a, b) => a.login > b.login ? 1 : -1)
+			.splice(0, limit);
 	}
-	
-	return matchedUsers
-		.sort((a, b) => a.login > b.login ? 1 : -1)
-		.splice(0, limit);
 };
 
-const deleteUser = (id) => {
-	const index = users.findIndex(user => user.id === id);
+const deleteUser = userId => {
+	const index = users.findIndex(user => user.id == userId);
 	
-	if (index === -1) {
+	if (index < 0) {
 		return undefined;
+	} else {
+		return users[index].isDeleted = true;
 	}
-	
-	users[index].isDeleted = true;
 };
 
 export {
