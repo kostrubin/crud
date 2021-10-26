@@ -1,4 +1,6 @@
 import express from 'express';
+import { schema } from "./schema.js";
+import { validate } from "./validation.js";
 import {
 	getAllUsers,
 	getDeletedUsers,
@@ -44,21 +46,21 @@ router.get('/:id', (req, res) => {
 	}
 });
 
-router.post('/', (req, res) => {
+router.post('/', validate(schema), (req, res) => {
 	addUser(req.body);
-	
 	res.sendStatus(200);
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validate(schema), (req, res) => {
 	const user = updateUser(req.params.id, req.body);
 	
 	if (user === undefined) {
 		res
-			.status(404)
-			.send(`User ${req.params.id} not found`);
+			.sendStatus(404)
 	} else {
-		res.json(user);
+		res
+			.status(200)
+			.json(user);
 	}
 });
 
