@@ -13,17 +13,21 @@ import {
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-	res.json(getAllUsers());
+router.get('/', async (req, res) => {
+	const users = await getAllUsers();
+
+	return res.json(users);
 });
 
-router.get('/deleted', (req, res) => {
-	res.json(getDeletedUsers());
+router.get('/deleted', async (req, res) => {
+	const users = await getDeletedUsers();
+
+	return res.json(users);
 });
 
-router.get('/search', (req, res) => {
+router.get('/search', async (req, res) => {
 	const { loginSubstring, limit } = req.query;
-	const foundUsers = getAutoSuggestUsers(loginSubstring, limit);
+	const foundUsers = await getAutoSuggestUsers(loginSubstring, limit);
 
 	if (foundUsers === undefined) {
 		res
@@ -34,8 +38,8 @@ router.get('/search', (req, res) => {
 	res.send(foundUsers);
 });
 
-router.get('/:id', (req, res) => {
-	const user = getUser(req.params.id);
+router.get('/:id', async (req, res) => {
+	const user = await getUser(req.params.id);
 
 	if (user === undefined) {
 		res
@@ -46,34 +50,19 @@ router.get('/:id', (req, res) => {
 	}
 });
 
-router.post('/', validate(schema), (req, res) => {
-	addUser(req.body);
+router.post('/', validate(schema), async (req, res) => {
+	await addUser(req.body);
 	res.sendStatus(200);
 });
 
-router.put('/:id', validate(schema), (req, res) => {
-	const user = updateUser(req.params.id, req.body);
-
-	if (user === undefined) {
-		res
-			.sendStatus(404);
-	} else {
-		res
-			.status(200)
-			.json(user);
-	}
+router.put('/:id', validate(schema), async (req, res) => {
+	await updateUser(req.params.id, req.body);
+	res.sendStatus(200);
 });
 
-router.delete('/:id', (req, res) => {
-	const user = deleteUser(req.params.id);
-
-	if (user === undefined) {
-		res
-			.status(404)
-			.send(`User ${req.params.id} not found`);
-	} else {
-		res.send(`User ${req.params.id} was deleted`);
-	}
+router.delete('/:id', async (req, res) => {
+	await deleteUser(req.params.id);
+	res.sendStatus(200);
 });
 
 export { router };

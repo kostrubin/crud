@@ -1,55 +1,64 @@
 import User from '../models/user.js';
-import { users } from '../mock/users.js';
+import pkg from 'sequelize';
+const { Op } = pkg;
 
-const getAllUsers = () => User.findAll({
-	where: { isDeleted: false }
-}).then(result => result);
 
-const getDeletedUsers = () => User.findAll({
-	where: { isDeleted: true }
-}).then(result => console.log(JSON.stringify(result)));
+const getAllUsers = async () => {
+	const result = await User.findAll({
+		where: { isDeleted: false }
+	});
 
-const getUser = userId => users.find(user => userId === user.id);
+	return result.map(it => it.dataValues);
+};
 
-const addUser = userData => User.create({
+const getDeletedUsers = async () => {
+	const result = await User.findAll({
+		where: { isDeleted: true }
+	});
+
+	return result.map(it => it.dataValues);
+};
+
+const getUser = async userId => await User.findOne({
+	where: { id: userId }
+});
+
+const addUser = async userData => User.create({
 	...userData,
 	isDeleted: false
 });
 
-const updateUser = (id, userData) => {
-	const index = users.findIndex(user => user.id === id);
-
-	if (index === -1) {
-		return undefined;
+const updateUser = async (id, userData) => {
+	try {
+		await User.update(
+			{ ...userData },
+			{ where: { id } }
+		);
+	} catch (err) {
+		throw new Error(err);
 	}
-
-	for (const key in userData) {
-		if (userData.hasOwnProperty(key)) {
-			users[index][key] = userData[key];
-		}
-	}
-
-	return users[index];
 };
 
-const getAutoSuggestUsers = (loginSubstring, limit) => {
-	const matchedUsers = users.filter(user => user.login.includes(loginSubstring));
-
-	if (!matchedUsers.length) {
-		return undefined;
-	}
-	return matchedUsers
-		.sort((a, b) => a.login > b.login ? 1 : -1)
-		.splice(0, limit);
+const getAutoSuggestUsers = async (loginSubstring, limit) => {
+	return await User.findAll({
+		where: {
+			login: {
+				[Op.like]: `%${loginSubstring}%`
+			}
+		},
+		limit
+	});
 };
 
-const deleteUser = userId => {
-	const index = users.findIndex(user => user.id === userId);
-
-	if (index < 0) {
-		return undefined;
+const deleteUser = async userId => {
+	try {
+		await User.update(
+			{ isDeleted: true },
+			{ where: { id: userId } }
+		);
+	} catch (err) {
+		throw new Error(err);
 	}
-	return users[index].isDeleted = true;
 };
 
 export {
