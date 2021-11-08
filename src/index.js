@@ -1,7 +1,7 @@
 import express from 'express';
-import { router } from './routes.js';
+import { router } from './controllers/users.js';
+import { PORT, API } from './config/config.js';
 
-const PORT = process.env.port || 3000;
 const app = express();
 
 app.listen(PORT, () => {
@@ -9,4 +9,4 @@ app.listen(PORT, () => {
 });
 
 app.use(express.json());
-app.use('/users', router);
+app.use(API, router);

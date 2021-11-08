@@ -1,14 +1,14 @@
 function errorHandler(schemaErrors) {
 	const errors = schemaErrors.map(err => {
 		const { path, message } = err;
-		
-		return { path, message }
+
+		return { path, message };
 	});
-	
+
 	return {
 		status: 'failed',
 		errors
-	}
+	};
 }
 
 function validate(schema) {
@@ -16,15 +16,15 @@ function validate(schema) {
 		const { error } = schema.validate(req.body, {
 			abortEarly: false
 		});
-		
+
 		if (error) {
 			res
 				.status(400)
 				.json(errorHandler(error.details));
 		} else {
-			next();
+			return next();
 		}
-	}
+	};
 }
 
 export { validate };

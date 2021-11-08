@@ -1,6 +1,6 @@
 import express from 'express';
-import { schema } from "./schema.js";
-import { validate } from "./validation.js";
+import { schema } from './validation/schema.js';
+import { validate } from './validation/validation.js';
 import {
 	getAllUsers,
 	getDeletedUsers,
@@ -9,7 +9,7 @@ import {
 	addUser,
 	updateUser,
 	deleteUser
-} from "./controllers.js";
+} from '../services/users.js';
 
 const router = express.Router();
 
@@ -22,25 +22,25 @@ router.get('/deleted', (req, res) => {
 });
 
 router.get('/search', (req, res) => {
-	const {loginSubstring, limit} = req.query;
+	const { loginSubstring, limit } = req.query;
 	const foundUsers = getAutoSuggestUsers(loginSubstring, limit);
-	
+
 	if (foundUsers === undefined) {
 		res
 			.status(404)
-			.send('No match')
+			.send('No match');
 	}
-	
+
 	res.send(foundUsers);
 });
 
 router.get('/:id', (req, res) => {
 	const user = getUser(req.params.id);
-	
+
 	if (user === undefined) {
 		res
 			.status(404)
-			.json({message: `User with id ${req.params.id} not found`});
+			.json({ message: `User with id ${req.params.id} not found` });
 	} else {
 		res.json(user);
 	}
@@ -53,10 +53,10 @@ router.post('/', validate(schema), (req, res) => {
 
 router.put('/:id', validate(schema), (req, res) => {
 	const user = updateUser(req.params.id, req.body);
-	
+
 	if (user === undefined) {
 		res
-			.sendStatus(404)
+			.sendStatus(404);
 	} else {
 		res
 			.status(200)
@@ -66,7 +66,7 @@ router.put('/:id', validate(schema), (req, res) => {
 
 router.delete('/:id', (req, res) => {
 	const user = deleteUser(req.params.id);
-	
+
 	if (user === undefined) {
 		res
 			.status(404)
