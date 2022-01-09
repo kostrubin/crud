@@ -11,21 +11,21 @@ import {
 	deleteUser
 } from '../services/users.js';
 
-const router = express.Router();
+const userRouter = express.Router();
 
-router.get('/', async (req, res) => {
+userRouter.get('/', async (req, res) => {
 	const users = await getAllUsers();
 
 	return res.json(users);
 });
 
-router.get('/deleted', async (req, res) => {
+userRouter.get('/deleted', async (req, res) => {
 	const users = await getDeletedUsers();
 
 	return res.json(users);
 });
 
-router.get('/search', async (req, res) => {
+userRouter.get('/search', async (req, res) => {
 	const { loginSubstring, limit } = req.query;
 	const foundUsers = await getAutoSuggestUsers(loginSubstring, limit);
 
@@ -38,7 +38,7 @@ router.get('/search', async (req, res) => {
 	res.send(foundUsers);
 });
 
-router.get('/:id', async (req, res) => {
+userRouter.get('/:id', async (req, res) => {
 	const user = await getUser(req.params.id);
 
 	if (user === undefined) {
@@ -50,19 +50,19 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
-router.post('/', validate(schema), async (req, res) => {
+userRouter.post('/', validate(schema), async (req, res) => {
 	await addUser(req.body);
 	res.sendStatus(200);
 });
 
-router.put('/:id', validate(schema), async (req, res) => {
+userRouter.put('/:id', validate(schema), async (req, res) => {
 	await updateUser(req.params.id, req.body);
 	res.sendStatus(200);
 });
 
-router.delete('/:id', async (req, res) => {
+userRouter.delete('/:id', async (req, res) => {
 	await deleteUser(req.params.id);
 	res.sendStatus(200);
 });
 
-export { router };
+export { userRouter };
