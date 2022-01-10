@@ -29,14 +29,14 @@ const addUser = async userData => User.create({
 });
 
 const updateUser = async (id, userData) => {
-	try {
-		await User.update(
-			{ ...userData },
-			{ where: { id } }
-		);
-	} catch (err) {
-		throw new Error(err);
+	if (!await getUser(id)) {
+		return null;
 	}
+
+	await User.update(
+		{ ...userData },
+		{ where: { id } }
+	);
 };
 
 const getAutoSuggestUsers = async (loginSubstring, limit) => {
@@ -51,14 +51,14 @@ const getAutoSuggestUsers = async (loginSubstring, limit) => {
 };
 
 const deleteUser = async userId => {
-	try {
-		await User.update(
-			{ isDeleted: true },
-			{ where: { id: userId } }
-		);
-	} catch (err) {
-		throw new Error(err);
+	if (!await getUser(userId)) {
+		return null;
 	}
+
+	await User.update(
+		{ isDeleted: true },
+		{ where: { id: userId } }
+	);
 };
 
 export {

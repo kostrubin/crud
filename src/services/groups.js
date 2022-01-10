@@ -13,25 +13,25 @@ const getGroup = async groupId => await Group.findOne({
 const addGroup = async groupData => Group.create({ ...groupData });
 
 const updateGroup = async (id, groupData) => {
-	try {
-		await Group.update(
-			{ ...groupData },
-			{ where: { id } }
-		);
-	} catch (err) {
-		throw new Error(err);
+	if (!await getGroup(id)) {
+		return null;
 	}
+
+	await Group.update(
+		{ ...groupData },
+		{ where: { id } }
+	);
 };
 
 const deleteGroup = async groupId => {
-	try {
-		await Group.destroy({
-			force: true,
-			where: { id: groupId }
-		});
-	} catch (err) {
-		throw new Error(err);
+	if (!await getGroup(groupId)) {
+		return null;
 	}
+
+	await Group.destroy({
+		force: true,
+		where: { id: groupId }
+	});
 };
 
 export {

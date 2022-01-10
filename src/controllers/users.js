@@ -1,6 +1,7 @@
 import express from 'express';
-import { schema } from './validation/schema.js';
-import { validate } from './validation/validation.js';
+import errorLogger from '../middleware/logging/error-logger.js';
+import { schema } from '../middleware/validation/schema.js';
+import { validate } from '../middleware/validation/validation.js';
 import {
 	getAllUsers,
 	getDeletedUsers,
@@ -14,55 +15,92 @@ import {
 const userRouter = express.Router();
 
 userRouter.get('/', async (req, res) => {
-	const users = await getAllUsers();
-
-	return res.json(users);
+	try {
+		const users = await getAllUsers();
+		res.json(users);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 userRouter.get('/deleted', async (req, res) => {
-	const users = await getDeletedUsers();
-
-	return res.json(users);
+	try {
+		const users = await getDeletedUsers();
+		res.json(users);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 userRouter.get('/search', async (req, res) => {
-	const { loginSubstring, limit } = req.query;
-	const foundUsers = await getAutoSuggestUsers(loginSubstring, limit);
-
-	if (foundUsers === undefined) {
-		res
-			.status(404)
-			.send('No match');
+	try {
+		const { loginSubstring, limit } = req.query;
+		const foundUsers = await getAutoSuggestUsers(loginSubstring, limit);
+		res.send(foundUsers);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
 	}
-
-	res.send(foundUsers);
 });
 
 userRouter.get('/:id', async (req, res) => {
-	const user = await getUser(req.params.id);
+	try {
+		const user = await getUser(req.params.id);
 
-	if (user === undefined) {
-		res
-			.status(404)
-			.json({ message: `User with id ${req.params.id} not found` });
-	} else {
-		res.json(user);
+		if (!user) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.json(user);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
 	}
 });
 
 userRouter.post('/', validate(schema), async (req, res) => {
-	await addUser(req.body);
-	res.sendStatus(200);
+	try {
+		await addUser(req.body);
+		res.sendStatus(200);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 userRouter.put('/:id', validate(schema), async (req, res) => {
-	await updateUser(req.params.id, req.body);
-	res.sendStatus(200);
+	try {
+		const user = await updateUser(req.params.id, req.body);
+
+		if (!user) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.sendStatus(200);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 userRouter.delete('/:id', async (req, res) => {
-	await deleteUser(req.params.id);
-	res.sendStatus(200);
+	try {
+		const user = await deleteUser(req.params.id);
+
+		if (!user) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.sendStatus(200);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 export { userRouter };

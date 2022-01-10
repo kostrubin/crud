@@ -1,4 +1,5 @@
 import express from 'express';
+import errorLogger from '../middleware/logging/error-logger.js';
 import {
 	getAllGroups,
 	getGroup,
@@ -10,36 +11,71 @@ import {
 const groupRouter = express.Router();
 
 groupRouter.get('/', async (req, res) => {
-	const users = await getAllGroups();
-
-	return res.json(users);
+	try {
+		const groups = await getAllGroups();
+		res.json(groups);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 groupRouter.get('/:id', async (req, res) => {
-	const user = await getGroup(req.params.id);
+	try {
+		const group = await getGroup(req.params.id);
 
-	if (user === undefined) {
-		res
-			.status(404)
-			.json({ message: `User with id ${req.params.id} not found` });
-	} else {
-		res.json(user);
+		if (!group) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.json(group);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
 	}
 });
 
 groupRouter.post('/', async (req, res) => {
-	await addGroup(req.body);
-	res.sendStatus(200);
+	try {
+		await addGroup(req.body);
+		res.sendStatus(200);
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 groupRouter.put('/:id', async (req, res) => {
-	await updateGroup(req.params.id, req.body);
-	res.sendStatus(200);
+	try {
+		const group = await updateGroup(req.params.id, req.body);
+
+		if (!group) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.sendStatus(200);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 groupRouter.delete('/:id', async (req, res) => {
-	await deleteGroup(req.params.id);
-	res.sendStatus(200);
+	try {
+		const group = 		await deleteGroup(req.params.id);
+
+		if (!group) {
+			errorLogger('Not found', req);
+			res.sendStatus(404);
+		} else {
+			res.sendStatus(200);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
+	}
 });
 
 export { groupRouter };

@@ -1,16 +1,24 @@
 import express from 'express';
 import { addUsersToGroup } from '../services/user-groups.js';
+import errorLogger from '../middleware/logging/error-logger.js';
 
 const userGroupRouter = express.Router();
 
 userGroupRouter.post('/', async (req, res) => {
-	if (!req.body.groupId || !req.body.userIds || !req.body.userIds.length) {
-		res
-			.status(404)
-			.json({ message: 'Invalid parameters. Integer groupId and userIds array are expected' });
+	try {
+		const { groupId, userIds } = req.body;
+
+		if (!groupId || !userIds || !userIds.length) {
+			errorLogger('Wrong parameters', req);
+			res.sendStatus(404);
+		} else {
+			await addUsersToGroup(groupId, userIds);
+			res.sendStatus(200);
+		}
+	} catch (err) {
+		errorLogger(err, req);
+		throw new Error(err);
 	}
-	await addUsersToGroup(req.body.groupId, req.body.userIds);
-	res.sendStatus(200);
 });
 
 export { userGroupRouter };

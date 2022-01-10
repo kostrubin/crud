@@ -8,6 +8,9 @@ import {
 	GROUP_API,
 	USER_GROUP_API
 } from './config/config.js';
+import serviceLogger from './middleware/logging/service-logger.js';
+import unhandledLogger from './middleware/logging/unhandled-logger.js';
+
 
 const app = express();
 
@@ -15,7 +18,18 @@ app.listen(PORT, () => {
 	console.log(`Server for CRUD users service is running on port: ${PORT}`);
 });
 
-app.use(express.json());
-app.use(USER_API, userRouter);
-app.use(GROUP_API, groupRouter);
-app.use(USER_GROUP_API, userGroupRouter);
+app
+	.use(express.json())
+	.use(serviceLogger)
+	.use(USER_API, userRouter)
+	.use(GROUP_API, groupRouter)
+	.use(USER_GROUP_API, userGroupRouter);
+
+process
+	.on('unhandledRejection', (reason, p) => {
+		unhandledLogger(reason, p);
+	})
+	.on('uncaughtException', err => {
+		unhandledLogger(err);
+	});
+
