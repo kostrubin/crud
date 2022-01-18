@@ -20,7 +20,7 @@ userRouter.get('/', async (req, res) => {
 		res.json(users);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -30,7 +30,7 @@ userRouter.get('/deleted', async (req, res) => {
 		res.json(users);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -41,7 +41,7 @@ userRouter.get('/search', async (req, res) => {
 		res.send(foundUsers);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -57,7 +57,7 @@ userRouter.get('/:id', async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -67,7 +67,7 @@ userRouter.post('/', validate(schema), async (req, res) => {
 		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -83,7 +83,7 @@ userRouter.put('/:id', validate(schema), async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -99,7 +99,7 @@ userRouter.delete('/:id', async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 

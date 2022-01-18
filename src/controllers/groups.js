@@ -16,7 +16,7 @@ groupRouter.get('/', async (req, res) => {
 		res.json(groups);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -32,7 +32,7 @@ groupRouter.get('/:id', async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -42,7 +42,7 @@ groupRouter.post('/', async (req, res) => {
 		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -58,7 +58,7 @@ groupRouter.put('/:id', async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
@@ -74,7 +74,7 @@ groupRouter.delete('/:id', async (req, res) => {
 		}
 	} catch (err) {
 		errorLogger(err, req);
-		throw new Error(err);
+		res.sendStatus(400);
 	}
 });
 
