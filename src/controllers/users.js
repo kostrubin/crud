@@ -73,14 +73,8 @@ userRouter.post('/', validate(schema), async (req, res) => {
 
 userRouter.put('/:id', validate(schema), async (req, res) => {
 	try {
-		const user = await updateUser(req.params.id, req.body);
-
-		if (!user) {
-			errorLogger('Not found', req);
-			res.sendStatus(404);
-		} else {
-			res.sendStatus(200);
-		}
+		await updateUser(req.params.id, req.body);
+		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
 		res.sendStatus(400);
@@ -89,14 +83,8 @@ userRouter.put('/:id', validate(schema), async (req, res) => {
 
 userRouter.delete('/:id', async (req, res) => {
 	try {
-		const user = await deleteUser(req.params.id);
-
-		if (!user) {
-			errorLogger('Not found', req);
-			res.sendStatus(404);
-		} else {
-			res.sendStatus(200);
-		}
+		await deleteUser(req.params.id);
+		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
 		res.sendStatus(400);

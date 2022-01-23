@@ -29,10 +29,6 @@ const addUser = async userData => User.create({
 });
 
 const updateUser = async (id, userData) => {
-	if (!await getUser(id)) {
-		return null;
-	}
-
 	await User.update(
 		{ ...userData },
 		{ where: { id } }
@@ -51,10 +47,6 @@ const getAutoSuggestUsers = async (loginSubstring, limit) => {
 };
 
 const deleteUser = async userId => {
-	if (!await getUser(userId)) {
-		return null;
-	}
-
 	await User.update(
 		{ isDeleted: true },
 		{ where: { id: userId } }

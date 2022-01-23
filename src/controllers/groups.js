@@ -38,8 +38,8 @@ groupRouter.get('/:id', async (req, res) => {
 
 groupRouter.post('/', async (req, res) => {
 	try {
-		await addGroup(req.body);
-		res.sendStatus(200);
+		const group = await addGroup(req.body);
+		res.json(group);
 	} catch (err) {
 		errorLogger(err, req);
 		res.sendStatus(400);
@@ -48,14 +48,8 @@ groupRouter.post('/', async (req, res) => {
 
 groupRouter.put('/:id', async (req, res) => {
 	try {
-		const group = await updateGroup(req.params.id, req.body);
-
-		if (!group) {
-			errorLogger('Not found', req);
-			res.sendStatus(404);
-		} else {
-			res.sendStatus(200);
-		}
+		await updateGroup(req.params.id, req.body);
+		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
 		res.sendStatus(400);
@@ -64,14 +58,8 @@ groupRouter.put('/:id', async (req, res) => {
 
 groupRouter.delete('/:id', async (req, res) => {
 	try {
-		const group = 		await deleteGroup(req.params.id);
-
-		if (!group) {
-			errorLogger('Not found', req);
-			res.sendStatus(404);
-		} else {
-			res.sendStatus(200);
-		}
+		await deleteGroup(req.params.id);
+		res.sendStatus(200);
 	} catch (err) {
 		errorLogger(err, req);
 		res.sendStatus(400);

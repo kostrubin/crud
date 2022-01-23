@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { authRouter } from './controllers/auth.js';
@@ -5,21 +6,19 @@ import { userRouter } from './controllers/users.js';
 import { groupRouter } from './controllers/groups.js';
 import { userGroupRouter } from './controllers/user-groups.js';
 import {
-	PORT,
 	AUTH,
 	USER_API,
 	GROUP_API,
 	USER_GROUP_API
-} from './config/config.js';
+} from './api/api.js';
 import serviceLogger from './middleware/logging/service-logger.js';
 import unhandledLogger from './middleware/logging/unhandled-logger.js';
 import checkToken from './middleware/auth/auth.js';
 
+export const app = express();
 
-const app = express();
-
-app.listen(PORT, () => {
-	console.log(`Server for CRUD users service is running on port: ${PORT}`);
+app.listen(process.env.PORT, () => {
+	console.log(`Server for CRUD users service is running on port: ${process.env.PORT}`);
 });
 
 app

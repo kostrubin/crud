@@ -1,6 +1,5 @@
 import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
-import { SECRET } from '../config/config.js';
 
 export default async function login(username, password) {
 	if (!username || !password) {
@@ -21,7 +20,7 @@ export default async function login(username, password) {
 
 	return jwt.sign(
 		{ id: user.id },
-		SECRET,
+		process.env.SECRET,
 		{ expiresIn: 60 }
 	);
 }

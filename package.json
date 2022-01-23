@@ -7,7 +7,7 @@
     "start": "nodemon src/index",
     "debug": "DEBUG=* node src/index",
     "build": "babel src -d dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "repository": {
     "type": "git",
@@ -23,13 +23,18 @@
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
     "@babel/eslint-parser": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.10",
     "@babel/preset-env": "^7.15.8",
     "eslint": "^8.1.0",
-    "nodemon": "^2.0.14"
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.14",
+    "superagent": "^7.1.1",
+    "supertest": "^6.2.2"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "debug": "^4.3.3",
+    "dotenv": "^14.2.0",
     "express": "^4.17.1",
     "express-joi-validation": "^5.0.0",
     "joi": "^17.4.2",
